@@ -1,0 +1,348 @@
+---
+title: 'Analyzing rate of SARS-CoV-2 Cases and Deaths in Five Different Brazilian States'
+author: "Aavikumar Bhakta"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output: pdf_document
+csl: bioinformatics.csl
+bibliography: references.bib
+params:
+  gff_file_path: "data/metadata/sars_refgenome_annotation.gff"
+  vcf_dir_path: "data/11_vcf_output_for_R"
+  sra_runtable_path: "data/00_sra_runtable/ProjectSraRunTable.txt"
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(echo = FALSE,
+                      warning = FALSE,
+                      message = FALSE,
+                      error = TRUE)
+```
+
+# Background and Overview
+
+The World Health Organization (WHO) labeled COVID-19 as a pandemic on March 11, 2021, and since then the number of cases and deaths in countries around the world have continued to rise [@SILVA2021100287]. Brazil recorded its first case on February 26, 2020, in the city of Saõ Paulo which is the most populous city and state in Brazil [@SILVA2021100287]. Since then, there have been first waves, second waves, and now third waves as a result of variants of SARS-CoV-2. Lack of proper safety precautions taken within certain countries like Brazil also attributes to the number of cases and deaths [@nikas_2021]. Unfortunately, Brazil is in the top 10 of countries in the world in cases, deaths, and deaths per 100,000 people [@johns_hopkins_coronavirus_resource_center_2021]. These are not categories that any country would want to be associated with being in the top 10 of. Much controversy surrounds the federal response to the COVID-19 pandemic namely by the President of Brazil, Mr. Jair Bolsonaro [@nikas_2021]. According to the a New York Times article, he did not use science as the basis of his decisions in attempting to protect the country. He tried pushing drugs that had not been scientifically proven to be effective, such as hydrochloriquine, rather than implementing social distancing and masks [@nikas_2021]. 
+
+I chose to work with this data because I wanted to find out how each state was affected differently within Brazil, and if they were impacted worse by the spread of the P.1 variant or Gamma variant that was detected in November 2020 and labeled as a variant of concern by the WHO on December 29, 2020 [@centers_for_disease_control_and_prevention]. This variant is able to evade neutralizing activity of mRNA vaccines by 4.5 fold which can be attributed to its 35 nucleotide mutations also making it more transmissible [@SILVA2021100287]. This dataset selected from the NCBI database analyzes five of Brazil's states, Amazonas, Rio Grande do Norte, Rio de Janeiro, Bahia, and Paraiba. It only included a short timeframe of December 2020 through February 2021, however, there did seem to be more cases in late January into February. I could not tell if that was because of the Gamma variant, but that is what the data showed and I made a hypothesis that that is a possible reason why cases went up then. I would have to conduct another analysis specifically on the SARS-CoV-2 virus and see whether the virus that was detected in Brazil during rise in cases in February had the same mutations as the Gamma variant.
+
+# Methods
+## SARS-CoV-2 Sequencing Data
+I downloaded a Brazilian dataset that included data specifically from five different states on November 20, 2021. I found that data in the BioProjects Resources database of NCBI was labeled as Genomic Surveillance of SARS-CoV-2 in different Brazilian states. This data only included data that was read on an Illumina sequencing machine. It included 185 runs and 10.65Gb of data taken from Brazil between December 2020 and February 2021. 
+
+## Creating tables and plots
+Each plot that was created in the figures section was made by parsing the original Brazil dataset file in numerous ways. First, the entire dataframe was cleaned to make the headers and titles all the same format. Figures 2 and 3 were made by removing the states and towns from the state_in_brazil column so that only states would be present in the column making it easy to group them together and make a graph that compares them all using appearances in the dataset (Figure 2), and in sex and age (Figure 3). Figures 4 and 5 were made using a parsed data table that separated all the states besides the ones that I wanted to analyze further, Rio de Janeiero and Rio Grande do Norte. The parsing for these plots did not remove the cities because I wanted to see how each one compared to each other in their respective states. Figure 6 uses a data table that Figure 2 and 3 use, but parses it further to only include states and collection dates. 
+
+## Packages that were used
+The packages that I used to parse and categorize the data were dplyr and tidyr [@dplyr; @tidyr] and I also used janitor [@janitor] to clean the dataframe making proper headers and titles. Magrittr, kableExtra, and stringr were used to make the data tables and pipe them [@magrittr; @kableExtra; @stringr]. Graphs and colors used to analyze the data tables visually used the packages hrbrthemes, viridis, and ggplot2 [@ggplot2; @ggthemes; @hrbrthemes]. Readr was used to read in and write the .csv files from the data folder [@readr].
+
+# Results and Discussion
+## People Infected with SARS-CoV-2 from Different Brazilian States
+I graphed all the states against each other to determine whether the information given in the dataset from December 2020 through February 2021 was correct compared to what more general data on Brazil says from Our World In Data (OWID) that was acquired from GitHub. The states of Rio de Janeiro and Bahia are two of top five most populous states in Brazil and according to the data the age of most people in the dataset who were infected was around 40 years old (Figure 3) [@most_populated_brazilian_states_2021_statista_2021]. This is much lower than the age of people from Rio Grande de Norte and Paraiba, and higher than Amazonas. These three countries are in the bottom 15 of populous states in Brazil [@most_populated_brazilian_states_2021_statista_2021]. When broken down even further between the least and most population states, Rio Grande do Norte and Rio de Janeiro respectively, have drastic difference in age groups that were infected with the virus (Figures 4 and 5). Overall between all the states sex is not something that was a factor in infections while age was. Age and population is a connection found throughout these figures. The last figure, figure 7, uses data from OWID and parses it to only include Brazil data then groups the table into only total cases and deaths per million to compare the two data against each other on the same graph. Total deaths per million seems to slowly increase, but it only appears that way because the Y-axis scale is so large so that total cases per million can fit on it. They both increase, and seem to increase faster once late 2020 comes around possibly because of the Gamma variant. 
+
+## Affect of the P.1 (Gamma) Variant in Brazilian States
+The P.1 variant was declared as a variant of concern (VOC) by the WHO on December 29, 2020 [@centers_for_disease_control_and_prevention]. However, it was first detected in the capital of Manaus in the Amazonas state on January 12, 2021 [@SILVA2021100287]. I was curious about how the introduction of this variant would affect the number of cases. It was difficult to come to a concrete conclusion because the dataset only included a small timeframe, December 2020 through February 2021. According to the data, most of the cases became more prevalent at the beginning of January once the Gamma variant was deemed a VOC (Figure 6). This correlates with the higher transmission rate of the Gamma variant resulting in more cases [@SILVA2021100287]. The deaths per million began to rise quicker as the variant came along (Figure 7) according to data acquired from the OWID database [@coronavirus_pandemic_covid-19].
+
+## Mutations in the SARS-CoV-2
+There are a couple of significant mutations in the SARS-CoV-2 sequences found in Brazil during the time that the data was collected late in 2020 and early 2021. The mutations, or SNPs, are within the N and S genes of the virus that (Figure 1). The N and S genes are also the longest which makes sense because the longer the gene is the more likely that there will be mutations within it as it goes through the process of transcription and translation into a protein (Table 1).
+
+```{r load-packages-and-functions}
+# Load packages
+library("vcfR")
+library("ggplot2")
+library("dplyr")
+library("tidyr")
+library("ggthemes")
+library("stringr")
+library("readr")
+library("janitor")
+library("magrittr")
+library("kableExtra")
+library("hrbrthemes")
+library("viridis")
+
+# this loads all function files in the code/functions directory
+function_paths <- list.files("code/functions", full.names = TRUE)
+purrr::walk(function_paths, source)
+```
+
+```{r load-vcf-data}
+# load in, tidy, and stack all of the VCF files in the target directory
+# these are the output of the bash pipeline
+stacked_vcfs <- parse_tidy_and_stack_vcfs(
+  vcf_dir_path = params$vcf_dir_path)
+
+# load in the gff file with genome annotations for SARS-CoV-2
+gff <- read_gff(gff_file_path = params$gff_file_path)
+
+# pull out just the named genes from the annotation file
+gene_table <- extract_genes_from_gff(annotation_object = gff)
+
+# combine the stacked vcf table with the gene names and the metadata from
+# the sra runtable file
+vcf_with_metadata <- add_genes_metadata_to_vcfstack(
+  sra_runtable_path = params$sra_runtable_path,
+  stacked_vcf = stacked_vcfs,
+  cleaned_genes_table = gene_table)
+```
+```{r parse-and-clean-raw-data}
+# Assigning raw dataset to variable
+project_run_table_txt <-
+  readr::read_csv("data/00_sra_runtable/ProjectSraRunTable.txt")
+
+# Assigning cleaned dataset to variable
+clean_project_run_table <- janitor::clean_names(project_run_table_txt)
+
+# Make column titles shorter
+clean_project_run_table <- clean_project_run_table %>%
+  dplyr::rename(country = geo_loc_name_country,
+                continent = geo_loc_name_country_continent,
+                state_in_brazil = geo_loc_name)
+clean_project_run_table$state_in_brazil %<>%
+  gsub("Brazil:", "", .) %>%
+  gsub(",", "", .)
+
+# read out the output file in .csv form
+readr::write_csv(clean_project_run_table,
+                 file = "data/00_sra_runtable/Final_Project_SraRunTable.csv")
+```
+```{r remove-towns-from-states-column}
+# remove towns from table leaving only states
+state_analysis_run_table <- clean_project_run_table
+state_analysis_run_table$state_in_brazil <-
+  state_analysis_run_table$state_in_brazil %>%
+  sub("\\\\.*", "", .)
+readr::write_csv(state_analysis_run_table,
+                 file = "output/tables/states_no_cities_table.csv")
+```
+```{r Rio-de-Janeiro-table}
+# Assign Rio de Janeiro table from clean_project_run_table
+rio_de_janeiro_table <- clean_project_run_table
+# Removing all other Brazilian states from the column
+rio_de_janeiro_table$state_in_brazil <-
+  rio_de_janeiro_table$state_in_brazil %<>%
+  sub("Paraiba.*", "", .) %>%
+  sub("Bahia.*", "", .) %>%
+  sub("Amazonas.*", "", .) %>%
+  sub("Rio Grande do Norte.*", "", .) %>%
+  sub("Rio de Janeiro*", "", .)
+# creating a table with only three variables
+rio_de_janeiro_table <- rio_de_janeiro_table %>%
+  select(state_in_brazil, host_sex, host_age) %>%
+  group_by(state_in_brazil, host_sex, host_age) %>%
+  tally()
+# Removing empty data cells from dataframe
+rio_de_janeiro_table <- rio_de_janeiro_table[-c(1:85), ]
+readr::write_csv(rio_de_janeiro_table,
+                 file = "output/tables/rio_de_janeiro_table.csv")
+```
+```{r rio-grande-do-norte-table}
+# Assign Rio Grande do Norte table from clean_project_run_table
+rio_grande_do_norte_table <- clean_project_run_table
+# Removing all other Brazilian states from the column
+rio_grande_do_norte_table$state_in_brazil <-
+  rio_grande_do_norte_table$state_in_brazil %<>%
+  sub("Paraiba.*", "", .) %>%
+  sub("Amazonas.*", "", .) %>%
+  sub("Rio de Janeiro.*", "", .) %>%
+  sub("Bahia.*", "", .) %>%
+  sub("Rio Grande do Norte*", "", .)
+# creating a table with only three variables
+rio_grande_do_norte_table <- rio_grande_do_norte_table %>%
+  select(state_in_brazil, host_sex, host_age) %>%
+  group_by(state_in_brazil, host_sex, host_age) %>%
+  tally()
+# Removing empty data cells from dataframe
+  rio_grande_do_norte_table <- rio_grande_do_norte_table[-c(1:75), ]
+readr::write_csv(rio_grande_do_norte_table,
+                 file = "output/tables/do_Norte_table.csv")
+```
+```{r collection-dates}
+# grouping collection dates and graphing by region
+dates_with_states_table <- state_analysis_run_table %>%
+  group_by(collection_date, state_in_brazil) %>%
+  tally()
+readr::write_csv(dates_with_states_table,
+                 file = "output/tables/dates_with_states_table.csv")
+```
+```{r outside-source-covid-data}
+# Parsing covid data from an outside source to only see Brazil
+parsed_owid_covid_data <-
+  readr::read_csv("data/00_sra_runtable/owid-covid-data.csv")
+parsed_owid_covid_data <- parsed_owid_covid_data %>%
+  filter(location == "Brazil")
+readr::write_csv(parsed_owid_covid_data,
+                 file = "output/tables/parsed_owid_covid_data.csv")
+```
+
+# Figures
+
+```{r SNPs-in-SARS-CoV-2-plot}
+# a plot of unique SNP locations within each gene across all samples
+  vcf_with_metadata %>%
+  filter(!is.na(gene)) %>% # get rid of SNPs not in gene regions
+  group_by(gene, pos) %>%
+  tally() %>% # this gives a column n for the number of gene by position
+  group_by(gene) %>%
+  tally() %>% # this collapses that down to the number of unique SNP locations
+  ggplot(aes(x = gene,
+             y = n)) +
+    geom_col() +
+    labs(title = "Count of distinct SNPs in Named SARS-CoV-2 Genes",
+         x = "Gene Name") +
+  theme_few() # get rid of the grey background
+
+ggsave(filename = "output/figures/SNP_plot.png")
+```
+
+**Figure 1**: N and S genes have the most unique SNPs in the set of samples analyzed.
+
+```{r state-density-plot}
+# Brazilian State density plot by number appearances in the data
+state_density_plot <- ggplot(state_analysis_run_table,
+                             aes(x = state_in_brazil, fill = state_in_brazil)) +
+  geom_density() +
+  labs(title = "Number of Appearances of Brazilian States in the Dataset",
+       x = "States in Brazil",
+       y = "Density") +
+  scale_x_discrete(guide = guide_axis(angle = 45)) +
+  scale_fill_manual(values = c("Amazonas" = "darkolivegreen3", "Bahia" = "tan2",
+                               "Paraiba" = "thistle3",
+                               "Rio de Janeiro" = "gold2",
+                               "Rio Grande do Norte" = "grey66"))
+
+ggsave(plot = state_density_plot,
+       filename = "output/figures/state_density_plot.png")
+state_density_plot
+```
+
+**Figure 2**: Amazonas and Bahia represent most of the state data from the dataset.
+
+```{r all-states-in-brazil}
+# all regions
+brazil_state_only_plot <- state_analysis_run_table %>%
+  select(state_in_brazil, host_age, host_sex) %>%
+  group_by(state_in_brazil, host_age, host_sex) %>%
+  summarize(mean_age = mean(host_age)) %>%
+  ggplot(aes(x = mean_age,
+             y = state_in_brazil,
+             fill = host_sex)) +
+  geom_col(position = position_dodge()) +
+  scale_fill_manual(values = c("dodgerblue2", "indianred4")) +
+  labs(title = paste("Age and Sex of People Infected with SARS-CoV-2 \nin Five",
+                     "Different Brazilian States"),
+       x = "Host Age",
+       y = "State in Brazil")
+
+ggsave(plot = brazil_state_only_plot,
+       filename = "output/figures/brazil_state_only.png")
+
+brazil_state_only_plot
+```
+
+**Figure 3**: The most populous states, Rio de Janeiro and Bahia, have middle aged populations that were infected with SARS-CoV-2 and least populous states have either an average high or low age of people infected with SARS-CoV-2.
+
+```{r rio-de-janeiro-plot}
+# Rio de Janeiro plot that compares cities, host age, and host sex
+rio_de_janeiro_bar_plot <- ggplot(data = rio_de_janeiro_table,
+                                  aes(x = state_in_brazil,
+                                      y = host_age,
+                                      fill = host_sex)) +
+  geom_col(position = position_dodge()) +
+  labs(title = paste("Age of People from Cities in Rio de Janeiro \nwho were",
+                     "Infected by SARS-Cov-2"),
+       x = "City in Rio de Janeiro (/city)",
+       y = "Host Age")
+  
+ggsave(plot = rio_de_janeiro_bar_plot,
+         filename = "output/figures/rio_cities_infection_age_gender_plot.png")
+
+rio_de_janeiro_bar_plot
+```
+
+**Figure 4**: Rio de Janeiro has the highest age of people infected with the virus, but on average the cities within Rio de Janeiro have an age of around 20 years that were infected.
+
+```{r rio-grande-do-norte-plot}
+# Rio Grande do Norte bar plot that compares cities, host age, and host sex
+rio_grande_do_norte_plot <- ggplot(data = rio_grande_do_norte_table,
+                            aes(x = state_in_brazil,
+                                y = host_age,
+                                fill = host_sex)) +
+  geom_col(position = position_dodge()) +
+  labs(title = paste("Age of People from Cities in Rio Grande do Norte",
+                     "who \nwere Infected by SARS-Cov-2"),
+         x = "Cities in Rio Grande do Norte (/city)",
+         y = "Host Age")
+  
+ggsave(plot = rio_grande_do_norte_plot,
+      filename = "output/figures/do_norte_cities_infection_age_gender_plot.png")
+
+rio_grande_do_norte_plot
+```
+
+**Figure 5**: Rio Grande do Norte has only one city in the dataset and the age of people infected with the virus in the city was high compared to the higher populous cities and states.
+
+```{r bubble-density-plot}
+# Bubble plot to show frequency of cases with
+# P.1 COVID-19 variant (Gamma) was rampant in Brazil
+dates_with_states_plot <- ggplot(dates_with_states_table,
+       aes(x = state_in_brazil, y = collection_date, size = n,
+           color = state_in_brazil)) +
+  scale_x_discrete(guide = guide_axis(angle = 45)) +
+  geom_point(alpha = 0.7) +
+  labs(title = paste("Frequency of SARS-CoV-2 Cases in Brazil \nfrom",
+                     "December through February"),
+       x = "States in Brazil",
+       y = "Collection Date (every 10 days)") +
+  scale_y_date(date_labels = "%b %y", date_breaks  = "10 days") +
+  scale_size(range = c(.1, 20), name = "Population (M)")
+
+ggsave(filename = "output/figures/dates_with_states_plot.png")
+
+dates_with_states_plot
+```
+
+**Figure 6**: Infections began to rise after the Gamma Variant was detected in Manaus on January 12, 2021.
+
+```{r cases-and-deaths-in-brazil}
+# Analyze difference in cases and deaths in Brazil during the time
+# that the Gamma variant was rampant in Brazil
+cases_deaths_brazil_plot <- parsed_owid_covid_data %>%
+  select(date, total_cases_per_million) %>%
+  group_by(date, total_cases_per_million) %>%
+  ggplot(aes(x = date)) +
+  geom_line(data = parsed_owid_covid_data, aes(y = total_cases_per_million,
+            color = "Cases per Million")) +
+  geom_line(data = parsed_owid_covid_data, aes(y = total_deaths_per_million,
+            color = "Deaths per Million")) +
+  scale_color_manual(name = "Y series",
+                     values = c("Cases per Million" = "chocolate1",
+                                 "Deaths per Million" = "green4")) +
+  scale_x_date(date_breaks = "3 month", date_labels = "%b-%y") +
+  labs(title = "Cases and Deaths per Million Detected in all of Brazil",
+       x = "Collection Date",
+       y = "per Million")
+
+ggsave(plot = cases_deaths_brazil_plot,
+       filename = "output/figures/cases_deaths_brazil_plot.png")
+
+cases_deaths_brazil_plot
+```
+
+**Figure 7**: Using outside data from Our World In Data (OWID) comparing cases and deaths per million people in Brazil. Both variables continue to increase every month without plateauing.
+
+# Tables
+
+```{r gene-lengths-in-SARS-CoV-2 genome}
+# A table that shows the length of each gene using its start and end
+gene_table %>%
+  mutate(length = end - start + 1) %>%
+  select(gene_name, start, end, length) %>%
+  knitr::kable(col.names = c("Gene Name",
+                             "Start",
+                             "End",
+                             "Length"))
+write.table(gene_table, file = "output/tables/gene_table")
+```
+
+**Table 1**: Genes S and N have are the longest genes found in the SARS-CoV-2 in Brazil and they also have the highest SNP's according to Figure 1.
+
+# Sources Cited
